@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prodipto27_flutter_version/helper.dart';
+import 'package:Prodipto27/helper.dart';
 
 class Syllabus extends StatelessWidget {
   const Syllabus({super.key});
@@ -47,13 +47,6 @@ class Syllabus extends StatelessWidget {
             open_link(
                 "https://drive.google.com/file/d/1ZUNgMX2UxVAMgnphpSWIGhFxcKDrakEc/view");
           },
-        ),
-        FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
-          backgroundColor: Colors.green,
-          child: const Icon(Icons.navigation),
         ),
       ],
     );

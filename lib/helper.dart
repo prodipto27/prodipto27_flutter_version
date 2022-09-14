@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'dart:io' show Platform;
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:math';
+import 'dart:convert';
 
 extension IndexedIterable<E> on Iterable<E> {
   Iterable<T> mapIndexed<T>(T Function(E e, int i) f) {
@@ -10,13 +13,31 @@ extension IndexedIterable<E> on Iterable<E> {
   }
 }
 
-Future<void> _launchUrl(String url) async {
+Future<void> launch_url(String url, {bool useDom = false}) async {
   Uri _url = Uri.parse(url);
-  if (!await launchUrl(
-    _url,
-    mode: LaunchMode.externalNonBrowserApplication,
-  )) {
-    throw 'Could not launch $_url';
+  print(canLaunchUrl);
+  try {
+    if (useDom == false) {
+      await launchUrl(
+        _url,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      await launchUrl(
+        _url,
+        mode: LaunchMode.inAppWebView,
+        webViewConfiguration: const WebViewConfiguration(
+          enableDomStorage: true,
+          enableJavaScript: true,
+        ),
+      );
+    }
+  } catch (e) {
+    try {
+      await launchUrl(_url);
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
@@ -44,6 +65,32 @@ void open_link(String url) {
       ),
     );
   } else {
-    _launchUrl(url);
+    launch_url(url, useDom: true);
   }
+}
+
+void showToast(BuildContext context, String text) {
+  final scaffold = ScaffoldMessenger.of(context);
+  scaffold.showSnackBar(
+    SnackBar(
+      content: Text(text),
+      // action: SnackBarAction(
+      //     label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+    ),
+  );
+}
+
+void play_bodda_sound(BuildContext context) async {
+  var assetsFile =
+      await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
+  final Map<String, dynamic> manifestMap = json.decode(assetsFile);
+  List<String> listMp3 =
+      manifestMap.keys.where((String key) => key.contains('.mp3')).toList();
+
+  var rng = Random();
+  int index = rng.nextInt(listMp3.length);
+  String filename = listMp3[index].split('/').last;
+
+  AudioPlayer audioPlayer = AudioPlayer();
+  audioPlayer.play(AssetSource("sounds/" + filename));
 }

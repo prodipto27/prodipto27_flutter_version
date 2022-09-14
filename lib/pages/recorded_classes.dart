@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:prodipto27_flutter_version/helper.dart';
+import 'package:Prodipto27/helper.dart';
 
 class RecordedClasses extends StatelessWidget {
   const RecordedClasses({super.key});
