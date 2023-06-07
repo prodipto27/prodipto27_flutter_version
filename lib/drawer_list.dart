@@ -76,17 +76,17 @@ List<Map> drawer_list_click(List<Map> drawer_properties, int index) {
 }
 
 List<Map> drawer_properties = [
-  {
-    "title": Text(
-      "Online Class Credentials",
-      style: TextStyle(),
-    ),
-    "leading": Icon(
-      Icons.vpn_key,
-    ),
-    "selected": false,
-    "selectedTileColor": Color(0xFFD9C2FB),
-  },
+  // {
+  //   "title": Text(
+  //     "Online Class Credentials",
+  //     style: TextStyle(),
+  //   ),
+  //   "leading": Icon(
+  //     Icons.vpn_key,
+  //   ),
+  //   "selected": false,
+  //   "selectedTileColor": Color(0xFFD9C2FB),
+  // },
   {
     "title": const Text('Class Routine'),
     "leading": Icon(Icons.event),
@@ -131,11 +131,17 @@ List<Map> drawer_properties = [
   },
   {"title": "DIVIDER"},
   {
-    "title": const Text('Have Chrome Browser?'),
-    "leading": Icon(Icons.help),
+    "title": const Text('Check For Updates'),
+    "leading": Icon(Icons.system_update),
     "selected": false,
     "selectedTileColor": Color(0xFFD9C2FB),
   },
+  // {
+  //   "title": const Text('Have Chrome Browser?'),
+  //   "leading": Icon(Icons.help),
+  //   "selected": false,
+  //   "selectedTileColor": Color(0xFFD9C2FB),
+  // },
   {
     "title": const Text('Feedback'),
     "leading": Icon(Icons.feedback),

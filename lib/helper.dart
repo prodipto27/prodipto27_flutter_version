@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:math';
 import 'dart:convert';
+// import 'dart:js' as js;
 
 extension IndexedIterable<E> on Iterable<E> {
   Iterable<T> mapIndexed<T>(T Function(E e, int i) f) {
@@ -35,37 +36,58 @@ Future<void> launch_url(String url, {bool useDom = false}) async {
   } catch (e) {
     try {
       await launchUrl(_url);
-    } catch (e) {
-      print(e);
+    } catch (e, stacktrace) {
+      print('Exception: ' + e.toString());
+      print('Stacktrace: ' + stacktrace.toString());
+
+      // try {
+
+      //   js.context
+      //       .callMethod('open', ['https://stackoverflow.com/questions/ask']);
+      // } catch (e, stacktrace) {
+      //   print('Exception: ' + e.toString());
+      //   print('Stacktrace: ' + stacktrace.toString());
+      // }
     }
   }
 }
 
 void open_link(String url) {
-  print("${Platform.isAndroid} ${Platform.isIOS}");
-  if (Platform.isAndroid || Platform.isIOS) {
-    FlutterWebBrowser.openWebPage(
-      url: url,
-      customTabsOptions: const CustomTabsOptions(
-        colorScheme: CustomTabsColorScheme.dark,
-        // toolbarColor: Colors.deepPurple,
-        // secondaryToolbarColor: Colors.green,
-        // navigationBarColor: Colors.amber,
-        shareState: CustomTabsShareState.on,
-        instantAppsEnabled: true,
-        showTitle: true,
-        urlBarHidingEnabled: true,
-      ),
-      safariVCOptions: const SafariViewControllerOptions(
-        barCollapsingEnabled: true,
-        preferredBarTintColor: Colors.green,
-        preferredControlTintColor: Colors.amber,
-        dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
-        modalPresentationCapturesStatusBarAppearance: true,
-      ),
-    );
-  } else {
-    launch_url(url, useDom: true);
+  try {
+    print("${Platform.isAndroid} ${Platform.isIOS}");
+    if (Platform.isAndroid || Platform.isIOS) {
+      FlutterWebBrowser.openWebPage(
+        url: url,
+        customTabsOptions: const CustomTabsOptions(
+          colorScheme: CustomTabsColorScheme.dark,
+          // toolbarColor: Colors.deepPurple,
+          // secondaryToolbarColor: Colors.green,
+          // navigationBarColor: Colors.amber,
+          shareState: CustomTabsShareState.on,
+          instantAppsEnabled: true,
+          showTitle: true,
+          urlBarHidingEnabled: true,
+        ),
+        safariVCOptions: const SafariViewControllerOptions(
+          barCollapsingEnabled: true,
+          preferredBarTintColor: Colors.green,
+          preferredControlTintColor: Colors.amber,
+          dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+          modalPresentationCapturesStatusBarAppearance: true,
+        ),
+      );
+    } else {
+      launch_url(url, useDom: true);
+    }
+  } catch (e, stacktrace) {
+    // print('Exception: ' + e.toString());
+    // print('Stacktrace: ' + stacktrace.toString());
+    // try {
+    //   js.context.callMethod('open', [url]);
+    // } catch (e, stacktrace) {
+    //   print('Exception: ' + e.toString());
+    //   print('Stacktrace: ' + stacktrace.toString());
+    // }
   }
 }
 

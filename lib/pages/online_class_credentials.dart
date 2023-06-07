@@ -31,29 +31,29 @@ class OnlineClassCredentials extends StatelessWidget {
             height: 20,
           ),
           // A button with some text and icon
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              ElevatedButton.icon(
-                icon: Icon(Icons.link),
-                label: Text(
-                  "Open Webpage".toUpperCase(),
-                  //style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-                onPressed: () {
-                  open_link(
-                      "https://prodipto27.github.io/pages/credentials.html");
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Color(0xFF6200EE)),
-                  alignment: Alignment.topLeft,
-                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.all(16)),
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     ElevatedButton.icon(
+          //       icon: Icon(Icons.link),
+          //       label: Text(
+          //         "Open Webpage".toUpperCase(),
+          //         //style: TextStyle(fontSize: 20, color: Colors.white),
+          //       ),
+          //       onPressed: () {
+          //         open_link(
+          //             "https://prodipto27.github.io/pages/credentials.html");
+          //       },
+          //       style: ButtonStyle(
+          //         backgroundColor:
+          //             MaterialStateProperty.all<Color>(Color(0xFF6200EE)),
+          //         alignment: Alignment.topLeft,
+          //         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+          //             EdgeInsets.all(16)),
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

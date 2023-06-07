@@ -1,11 +1,14 @@
 // ignore_for_file: use_key_in_widget_constructors, non_constant_identifier_names
 
+import 'dart:convert';
+
 import 'package:Prodipto27/helper.dart';
 import 'package:Prodipto27/main.dart';
 import 'package:requests/requests.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:flutter_html/flutter_html.dart';
+// import 'package:flutter_html/flutter_html.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 String routine_html_url = "https://orange-cake-0407.prodipto27.workers.dev/";
 
@@ -14,7 +17,7 @@ Future<String> routine_html_request() async {
   try {
     var r = await Requests.get(routine_html_url);
     // r.raiseForStatus();
-    body = r.content();
+    body = r.content().replaceAll("</body>", "<script>document.body.style.zoom=1.4;this.blur();</script></body>");
   } catch (e) {
     body = "Error: $e";
   }
@@ -25,12 +28,9 @@ Future<String> routine_html_request() async {
 Future<String> get_routine_html(BuildContext context) async {
   final LocalStorage storage = new LocalStorage('localdata.json');
   final ready_storage = await storage.ready;
-  String html_data = storage.getItem('routine_html') != null
-      ? storage.getItem('routine_html')
-      : await routine_html_request();
+  String html_data = storage.getItem('routine_html') ?? await routine_html_request();
 
   if (html_data != null) {
-    print("Loaded from local storage");
     showToast(context, "Loaded Saved Routine");
     return html_data;
   } else {
@@ -44,7 +44,7 @@ Future<String> routine_html_request_extra(BuildContext context) async {
   String body = await routine_html_request();
 
   if (!body.contains("Error:")) {
-    final LocalStorage storage = new LocalStorage('localdata.json');
+    final LocalStorage storage = LocalStorage('localdata.json');
     final ready_storage = await storage.ready;
     storage.setItem('routine_html', body);
     print("Saved to local storage");
@@ -67,54 +67,58 @@ class ClassRoutine extends StatefulWidget {
 }
 
 class _ClassRoutineState extends State<ClassRoutine> {
+  late WebViewController webViewController;
   String html_data = "";
-  Widget html_widget({final string_html_data: null}) {
-    if (string_html_data != null) {
-      return Html(
-        data: string_html_data,
-        shrinkWrap: true,
-      );
-    }
-    return Html(
-      data: html_data,
-      shrinkWrap: true,
-    );
+
+  @override
+  void initState() {
+    super.initState();
+    get_routine_html(context).then((value) {
+      setState(() {
+        html_data = value;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: get_routine_html(context),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Scaffold(
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                routine_html_request_extra(context).then((value) {
-                  WidgetsBinding.instance
-                      .addPostFrameCallback((_) => setState(() {
-                            html_data = value;
-                          }));
-                });
-              },
-              backgroundColor: Color(0xFF6200EE),
-              child: const Icon(Icons.refresh),
-            ),
-            body: ListView(
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Center(
-                    child: html_widget(string_html_data: snapshot.data),
-                  ),
-                ),
-              ],
-            ),
-          );
-        } else {
-          return spinner;
-        }
-      },
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          routine_html_request_extra(context).then((value) {
+            // set state and reload
+            setState(() {
+              html_data = value;
+            });
+            // Reload the WebView with the updated HTML content
+            webViewController.loadUrl(
+              Uri.dataFromString(
+                html_data,
+                mimeType: 'text/html',
+                encoding: Encoding.getByName('utf-8'),
+              ).toString(),
+            );
+          });
+        },
+        backgroundColor: Color(0xFF6200EE),
+        child: const Icon(Icons.refresh),
+      ),
+      body: WebView(
+        initialUrl: 'about:blank',
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (controller) {
+          webViewController = controller;
+          if (html_data.isNotEmpty) {
+            webViewController.loadUrl(
+              Uri.dataFromString(
+                html_data,
+                mimeType: 'text/html',
+                encoding: Encoding.getByName('utf-8'),
+              ).toString(),
+            );
+          }
+        },
+      ),
     );
   }
 }

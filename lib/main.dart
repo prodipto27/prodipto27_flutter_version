@@ -16,6 +16,7 @@ import 'package:Prodipto27/pages/recorded_classes.dart';
 import 'package:Prodipto27/pages/google_classroom.dart';
 import 'package:Prodipto27/pages/online_class_credentials.dart';
 import 'package:Prodipto27/pages/settings.dart';
+import 'package:Prodipto27/pages/updater.dart';
 import 'package:Prodipto27/pages/have_chrome_browser.dart';
 import 'package:Prodipto27/pages/feedback.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -66,26 +67,7 @@ Widget spinner = Center(
   ),
 );
 
-// Widget main_container = Center(
-//   child: Text('Prodipto27 App'),
-// );
-
 Widget main_container = spinner;
-
-// {
-//   "selectedTileColor": Color(0xFFD9C2FB),
-//   "title": const Text(
-//     'Feedback',
-// style: TextStyle(
-//   color: Color(0xFF731DF0),
-// ),
-//   ),
-// "leading": Icon(
-//   Icons.feedback,
-//   color: Color(0xFF6200EE),
-// ),
-//   "selected": true,
-// },
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -109,10 +91,11 @@ class _HomePageState extends State<HomePage> {
     storage.ready.then((value) {
       WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
             default_page = storage.getItem('default_page') ?? "Class Routine";
-            if (default_page.contains("Online Class Credentials")) {
-              open_link("https://prodipto27.github.io/pages/credentials.html");
-              main_container = OnlineClassCredentials();
-            } else if (default_page.contains("Class Routine")) {
+            // if (default_page.contains("Online Class Credentials")) {
+            //   // open_link("https://prodipto27.github.io/pages/credentials.html");
+            //   main_container = OnlineClassCredentials();
+            // } else
+            if (default_page.contains("Class Routine")) {
               main_container = spinner;
               Widget temp = ClassRoutine();
               main_container = temp;
@@ -295,6 +278,10 @@ class _HomePageState extends State<HomePage> {
                         main_container = GoogleClassroom();
                       } else if (e["title"].data.contains("Settings")) {
                         main_container = Settings();
+                      } else if (e["title"]
+                          .data
+                          .contains("Check For Updates")) {
+                        main_container = Updater();
                       } else if (e["title"]
                           .data
                           .contains("Have Chrome Browser")) {
