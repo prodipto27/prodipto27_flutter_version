@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'widget_background_task.dart'; // Import the widget background task file
 import 'package:localstorage/localstorage.dart';
 import 'package:Prodipto27/helper.dart';
 import 'package:Prodipto27/drawer_list.dart';
@@ -21,10 +22,47 @@ import 'package:Prodipto27/pages/have_chrome_browser.dart';
 import 'package:Prodipto27/pages/feedback.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:home_widget/home_widget.dart';
 import 'dart:io' show Platform;
+import 'package:intl/intl.dart';
+import 'package:workmanager/workmanager.dart';
+
+Future<void> backgroundCallback(Uri? uri) async {
+  if (uri?.host == 'updatecounter') {
+    int counter = 0;
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      counter = value!;
+      counter++;
+    });
+    await HomeWidget.saveWidgetData<int>('_counter', counter);
+    await HomeWidget.updateWidget(
+        //this must the class name used in .Kt
+        name: 'HomeScreenWidgetProvider',
+        iOSName: 'HomeScreenWidgetProvider');
+  }
+}
+
+String get_day_and_date() {
+  // Get current day and date
+  final now = DateTime.now();
+  final dayOfWeek = DateFormat.EEEE().format(now);
+  final currentDate = DateFormat('dd MMMM').format(now);
+
+  return "$dayOfWeek, $currentDate";
+}
+
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+    WidgetsFlutterBinding.ensureInitialized();
+    Workmanager workmanager = Workmanager();
+    workmanager.initialize(callbackDispatcher, isInDebugMode: true);
+    workmanager.registerPeriodicTask(
+      "1",
+      "widget_background_task",
+      frequency: Duration(minutes: 5),
+      initialDelay: Duration(seconds: 10),
+  );
   runApp(const Prodipto27App());
 }
 
@@ -82,10 +120,14 @@ String default_page = "Class Routine";
 // ignore: non_constant_identifier_names
 
 class _HomePageState extends State<HomePage> {
+  String day_and_date = get_day_and_date();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    HomeWidget.widgetClicked.listen((Uri? uri) => updateAppWidget());
+    updateAppWidget(); // This will load data from widget every time app is opened
 
     final LocalStorage storage = new LocalStorage('localdata.json');
     storage.ready.then((value) {
@@ -119,6 +161,16 @@ class _HomePageState extends State<HomePage> {
           }));
     });
   }
+
+/* For HomeScreen Widget */
+  
+  // Future<void> updateAppWidget() async {
+  //   await HomeWidget.saveWidgetData<String>('day_and_date', day_and_date);
+  //   await HomeWidget.updateWidget(
+  //       name: 'HomeScreenWidgetProvider', iOSName: 'HomeScreenWidgetProvider');
+  // }
+
+/* For HomeScreen Widget */
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +316,7 @@ class _HomePageState extends State<HomePage> {
                         main_container = OnlineClassCredentials();
                       } else if (e["title"].data.contains("Class Routine")) {
                         main_container = spinner;
-                        // main_container = html_widget(get_routine_html(context));
+                        // main_container = html_widget(get_routine_html());
                         main_container = ClassRoutine();
                       } else if (e["title"].data.contains("Syllabus")) {
                         main_container = Syllabus();

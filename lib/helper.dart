@@ -5,6 +5,10 @@ import 'dart:io' show Platform;
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:math';
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart' as parser;
 // import 'dart:js' as js;
 
 extension IndexedIterable<E> on Iterable<E> {
